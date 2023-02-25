@@ -2,12 +2,12 @@
 
 set -e
 
-workspaces=$(hyprctl workspaces -j | jq '.[] | "\(.name) - \(.monitor) - ID:\(.id)"' )
+workspaces=$(hyprctl workspaces -j | jq -r '.[] | "\(.name) - \(.monitor)=\(.name),\(.id)"' )
 selection=$(echo "$workspaces" | kickoff --from-stdin --stdout --prompt "Select Workspace:  ")
 test -n "$selection"
 
-id=$(echo "$selection" | awk -F ':' '{print $NF}')
-name=$(echo "$selection" | awk -F ' -' '{print $1}')
+id=$(echo "$selection" | awk -F ',' '{print $NF}')
+name=$(echo "$selection" | awk -F ',' '{print $1}')
 
 # Check if workspace is a named workspace
 if [ "$id" -le -1337 ]; then
